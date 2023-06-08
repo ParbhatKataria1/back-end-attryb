@@ -26,13 +26,13 @@ inventory.get("/", async (req, res) => {
       );
     if (obj.color)
       data = data.filter((el) => el.oem_spec.color.includes(obj.color));
-    if (obj.min_price)
+    if (+obj.min_price)
       data = data.filter((el) => el.oem_spec.price >= obj.min_price);
-    if (obj.max_price)
+    if (+obj.max_price)
       data = data.filter((el) => el.oem_spec.price <= obj.max_price);
-    if (obj.min_mileage)
+    if (+obj.min_mileage)
       data = data.filter((el) => el.oem_spec.mileage >= obj.min_mileage);
-    if (obj.max_mileage)
+    if (+obj.max_mileage)
       data = data.filter((el) => el.oem_spec.mileage <= obj.max_mileage);
 
     res.status(200).send({ data, userid });
