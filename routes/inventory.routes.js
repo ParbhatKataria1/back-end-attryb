@@ -88,7 +88,7 @@ inventory.delete("/:_id", async (req, res) => {
   }
 });
 inventory.get("/:_id", async (req, res) => {
-  const _id = req.query;
+  const _id = req.params;
   try {
     let data = await InventoryModel.findById(_id)
       .populate("oem_spec")
