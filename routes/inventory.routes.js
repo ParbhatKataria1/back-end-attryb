@@ -19,7 +19,8 @@ inventory.get("/", async (req, res) => {
         .populate("oem_spec")
         .populate("dealer");
     }
-
+    if (!(+obj.max_price))obj.max_price = Infinity;
+    if (!(+obj.max_mileage))obj.max_mileage = Infinity;
     if (obj.model)
       data = data.filter((el) =>
         el.oem_spec.model.match(new RegExp(obj.model, "i"))
