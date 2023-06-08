@@ -87,5 +87,17 @@ inventory.delete("/:_id", async (req, res) => {
     res.status(400).send("Error in Deleting the data");
   }
 });
+inventory.get("/:_id", async (req, res) => {
+  const _id = req.query;
+  try {
+    let data = await InventoryModel.findById(_id)
+      .populate("oem_spec")
+      .populate("dealer");
+
+    res.status(200).send(data);
+  } catch (error) {
+    res.status(400).send("Not able to get the data");
+  }
+});
 
 module.exports = { inventory };
