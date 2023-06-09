@@ -1,6 +1,7 @@
 const express = require("express");
 const { InventoryModel } = require("../model/inventory.model");
 const inventory = express.Router();
+import {upload} from '../utils/multer'
 
 inventory.get("/", async (req, res) => {
   const userid = req.headers.userid;
