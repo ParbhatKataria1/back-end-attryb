@@ -13,7 +13,6 @@ inventory.get("/", async (req, res) => {
     if (obj.limit) {
       let page = +obj.page || 1;
       let limit = +obj.limit;
-      console.log(page, limit)
       data = await InventoryModel.find()
         .skip((page-1)*(limit))
         .limit(limit)
