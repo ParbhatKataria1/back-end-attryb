@@ -7,7 +7,8 @@ inventory.get("/", async (req, res) => {
   const userid = req.headers.userid;
   try {
     const obj = req.query;
-
+    let length = await InventoryModel.find();
+    length = length.length;
     let data;
     if (obj.limit) {
       let page = +obj.page || 1;
@@ -40,7 +41,7 @@ inventory.get("/", async (req, res) => {
     if (+obj.max_mileage)
       data = data.filter((el) => +el.oem_spec.mileage <= +obj.max_mileage);
 
-    res.status(200).send({ data, userid });
+    res.status(200).send({ data, userid, length });
   } catch (error) {
     res.status(400).send("Not able to get the data");
   }
