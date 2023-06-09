@@ -1,7 +1,7 @@
 const express = require("express");
 const { InventoryModel } = require("../model/inventory.model");
 const inventory = express.Router();
-import {upload} from '../utils/multer'
+const {upload} = require('../utils/multer');
 
 inventory.get("/", async (req, res) => {
   const userid = req.headers.userid;
@@ -10,10 +10,12 @@ inventory.get("/", async (req, res) => {
 
     let data;
     if (obj.limit) {
-      obj.page = +obj.page || 1;
+      let page = +obj.page || 1;
+      let limit = +obj.limit;
+      console.log(page, limit)
       data = await InventoryModel.find()
-        .skip(obj.page)
-        .limit(obj.limit)
+        .skip((page-1)*(limit))
+        .limit(limit)
         .populate("oem_spec")
         .populate("dealer");
     } else {
