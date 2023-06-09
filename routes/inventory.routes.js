@@ -9,6 +9,7 @@ inventory.get("/", async (req, res) => {
 
     let data;
     if (obj.limit) {
+      obj.page = +obj.page || 1;
       data = await InventoryModel.find()
         .skip(obj.page)
         .limit(obj.limit)
@@ -46,6 +47,22 @@ inventory.post("/", async (req, res) => {
   const userid = req.headers.userid;
   const body = req.body;
   try {
+    const item = new InventoryModel({ dealer: userid, ...body });
+    await item.save();
+    res.status(201).send("Item is created");
+  } catch (error) {
+    res.status(400).send("Not able to create the Item");
+  }
+});
+
+
+inventory.post("/image",upload.single('image'), async (req, res) => {
+  const userid = req.headers.userid;
+  const body = req.body;
+  try {
+    let image = await cloudinary_js_config.uploader.upload(req.file.path);
+    image = image.secure_url;
+    body.image = image
     const item = new InventoryModel({ dealer: userid, ...body });
     await item.save();
     res.status(201).send("Item is created");
