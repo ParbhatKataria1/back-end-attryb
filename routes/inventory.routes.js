@@ -2,6 +2,7 @@ const express = require("express");
 const { InventoryModel } = require("../model/inventory.model");
 const inventory = express.Router();
 require("dotenv").config();
+
 // const { upload } = require("../utils/multer");
 // const cloudinary = require("../utils/cloudinary").v2;
 // const cloudinary = require("cloudinary").v2;
@@ -16,22 +17,13 @@ inventory.get("/", async (req, res) => {
   const userid = req.headers.userid;
   try {
     const obj = req.query;
-    let length = await InventoryModel.find();
-    length = length.length;
+    let length;
     let data;
-    if (obj.limit) {
-      let page = +obj.page || 1;
-      let limit = +obj.limit;
-      data = await InventoryModel.find()
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .populate("oem_spec")
-        .populate("dealer");
-    } else {
-      data = await InventoryModel.find()
-        .populate("oem_spec")
-        .populate("dealer");
-    }
+    let page = +obj.page || 1;
+    let limit = +obj.limit || 6;
+    data = await InventoryModel.find()
+      .populate("oem_spec")
+      .populate("dealer");
     if (!+obj.max_price) obj.max_price = Infinity;
     if (!+obj.max_mileage) obj.max_mileage = Infinity;
     if (obj.model)
@@ -48,7 +40,9 @@ inventory.get("/", async (req, res) => {
       data = data.filter((el) => +el.oem_spec.mileage >= +obj.min_mileage);
     if (+obj.max_mileage)
       data = data.filter((el) => +el.oem_spec.mileage <= +obj.max_mileage);
-
+      length = data.length;
+    data = data.filter((el, ind) => (page-1)*limit<=ind && ind<page*limit);
+    
     res.status(200).send({ data, userid, length });
   } catch (error) {
     res.status(400).send("Not able to get the data");
@@ -80,14 +74,13 @@ inventory.post("/", async (req, res) => {
   const userid = req.headers.userid;
   const body = req.body;
   try {
-    const item = new InventoryModel({  ...body, dealer: userid });
+    const item = new InventoryModel({ ...body, dealer: userid });
     await item.save();
     res.status(201).send("Item is created");
   } catch (error) {
     res.status(400).send("Not able to create the Item");
   }
 });
-
 
 inventory.patch("/:_id", async (req, res) => {
   const userid = req.headers.userid;
